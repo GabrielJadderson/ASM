@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# @author Gabriel Jadderson
+# *
+# * This script prints the size of a file in bytes, similarly to C's sizeof
+# * Usage: ./sizeof [arg] eg. ./sizeof bigassfile.txt
+# * Usage: bash sizeof [arg] eg. bash sizeof bigasssmallfile.txt
+# ->
+
+stat --printf="%s" $1
