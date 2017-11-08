@@ -69,6 +69,14 @@ print_string:
 	push 	%rbp
 	mov 	%rsp,%rbp 		#Function Prolog
 
+	push	%rax			#Saving the registers
+	push	%rbx
+	push	%rcx
+	push	%rdx
+	push	%rdi
+	push	%rsi
+	push	%r9
+
 	mov		16(%rbp),%rax	#Address of the String
 	xor		%rcx,%rcx		#Counter
 string_length:
@@ -84,6 +92,14 @@ string_length_finished:
 	mov		16(%rbp),%rsi   # Address of the String
 	mov 	%rcx,%rdx    	# Length of the String
 	syscall					#Call the kernel, 64Bit variant
+
+	pop		%r9				#Restoring the registers
+	pop		%rsi
+	pop		%rdi
+	pop		%rdx
+	pop		%rcx
+	pop		%rbx
+	pop		%rax
 
 	mov		%rbp,%rsp		#Function Epilog
 	pop 	%rbp

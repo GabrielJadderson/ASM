@@ -18,15 +18,18 @@ number_array_pointer:
 number_array_size:
   .space 8
 
+number_of_compares:
+  .space 8                          #64-bit integer for counting the amount of compares
+
 #=================== Strings ===================
 string_nl:                          #used for printing new lines to stdout
   .string "\n"                      #2 bytes + nul(0) = 3 bytes
 
 string_file_size:                   #used for printing the file size to stdout
-  .string "File size: "             #11 bytes + nul(0) = 12 bytes
+  .string "File size: \n"             #11 bytes + nul(0) = 12 bytes
 
 string_compares:                    #used for printing the compares to stdout
-  .string "Number of compares: "    #20 bytes + nul(0) = 21 bytes
+  .string "Number of compares: \n"    #20 bytes + nul(0) = 21 bytes
 
 #=================== Strings ===================
 
@@ -224,6 +227,17 @@ syscall
 call ISort2
 
 
+/* print number of compares out when program is done */
+push $string_compares
+call print_string
+pop string_compares
+push %rax
+mov number_of_compares, %rax
+call print_rax
+pop %rax
+
+
+
 
 
 /* terminate */
@@ -301,6 +315,7 @@ mov %rcx, %rax
 call print_rax
 
 add $1, %rbx
+call inc_compares #TODO: remove when testing performace
 cmp number_array_size,%rbx
 jl IS_resultprintingloop
 
@@ -339,6 +354,7 @@ mov number_array_size, %rsi
 mov number_array_pointer, %rdx
 
 IS2_WHILEI: #while (i < len(arr))
+call inc_compares #TODO: remove when testing performace
 cmp %rdi, %rsi
 je IS2_WHILEIEND
 # i < len(arr):
@@ -346,6 +362,7 @@ je IS2_WHILEIEND
   mov %rdi, %rcx # j = i
 
   IS2_WHILEJ: #while j > 0 && arr[j-1] > arr[j]
+  call inc_compares #TODO: remove when testing performace
   cmp $0, %rcx     # |-> j > 0
   je IS2_WHILEJEND # |
 
@@ -367,6 +384,7 @@ je IS2_WHILEIEND
   movq   (%rdx,%rcx,8), %r10
   movq -8(%rdx,%rcx,8), %r11
 
+  call inc_compares #TODO: remove when testing performace
   cmp %r10, %r11    # |-> arr[j-1] > arr[j]
   jle IS2_WHILEJEND # |
 
@@ -421,6 +439,7 @@ mov %rcx, %rax
 call print_rax
 
 add $1, %rbx
+call inc_compares #TODO: remove when testing performace
 cmp number_array_size,%rbx
 jl IS_resultprintingloop2
 
@@ -508,6 +527,7 @@ cltq
 call print_rax
 
 add $4, %rbx
+call inc_compares #TODO: remove when testing performace
 cmp $-24, %rbx
 jle is_resultprintingloop
 
@@ -524,6 +544,7 @@ jle is_resultprintingloop
 movl $2, -4(%rbp)
 
 for_loop:
+call inc_compares #TODO: remove when testing performace
 cmp $6, %rcx      #6 because we have 6 elements our array. TODO: replace static variable with dynamic.
 jg end_for_loop
 
@@ -544,11 +565,13 @@ mov %eax, -8(%rbp)
 
 /*  while (i > 0 && A[i] > key) */
 while_loop_start:
+call inc_compares #TODO: remove when testing performace
 cmpl $0, -8(%rbp)        #i > 0
 jle while_loop_end
 movl -8(%rbp), %eax      #again i chose a random long register for this operation */
 cltq                    #convert long to quad for operation and overflow prevention?
 movl -48(%rbp,%rax,4), %eax
+call inc_compares #TODO: remove when testing performace
 cmpl %eax, -12(%rbp)
 jge while_loop_end
 
@@ -630,6 +653,7 @@ cltq
 call print_rax
 
 add $4, %rbx
+call inc_compares #TODO: remove when testing performace
 cmp $-24, %rbx
 jle is_resultprintingloop2
 
@@ -727,6 +751,7 @@ get_string_length:
   mov %rbp, %rsp
   pop %rbp
   ret
+
 
 
 
@@ -926,3 +951,79 @@ print_rax:
     	mov		%rbp,%rsp			#Function Epilog
     	pop 	%rbp
     	ret
+
+
+
+
+      ###############################################################################
+      # This Function increments the compare counter. we want to count how many times
+      # the insertion sort algorithm uses the compare instruction.
+      # this function only uses the rax register and is only rax safe.
+      ###############################################################################
+
+      .type inc_compares, @function
+      inc_compares:
+      push 	%rbp
+      mov 	%rsp,%rbp 			#Function Prolog
+
+      #push %rax
+
+      addq $1, number_of_compares
+
+      #mov number_of_compares, %rax
+      #call print_rax
+
+      #pop %rax
+
+      mov		%rbp,%rsp			#Function Epilog
+    	pop 	%rbp
+      ret
+
+
+      ###############################################################################
+      # This function prints a zero terminated String to the screen. The address of
+      # the String is given on the stack
+      #
+      # The function is register save
+      ###############################################################################
+
+      .type print_string, @function
+      print_string:
+      	push 	%rbp
+      	mov 	%rsp,%rbp 		#Function Prolog
+
+      	push	%rax			#Saving the registers
+      	push	%rbx
+      	push	%rcx
+      	push	%rdx
+      	push	%rdi
+      	push	%rsi
+      	push	%r9
+
+      	mov		16(%rbp),%rax	#Address of the String
+      	xor		%rcx,%rcx		#Counter
+      string_length:
+      	movb	(%rax,%rcx), %bl	#Load byte
+      	cmp		$0,%bl			#End of String?
+      	jz		string_length_finished
+      	add		$1,%rcx			#Increase counter
+      	jmp		string_length
+
+      string_length_finished:
+      	mov 	$1, %rax    	# In "syscall" style 1 means: write
+      	mov 	$1, %rdi    	# File descriptor (std out)
+      	mov		16(%rbp),%rsi   # Address of the String
+      	mov 	%rcx,%rdx    	# Length of the String
+      	syscall					#Call the kernel, 64Bit variant
+
+      	pop		%r9				#Restoring the registers
+      	pop		%rsi
+      	pop		%rdi
+      	pop		%rdx
+      	pop		%rcx
+      	pop		%rbx
+      	pop		%rax
+
+      	mov		%rbp,%rsp		#Function Epilog
+      	pop 	%rbp
+      	ret
