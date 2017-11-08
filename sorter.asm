@@ -15,6 +15,9 @@ file_readin_pointer:
 number_array_pointer:
   .space 8
 
+number_array_size:
+  .space 8
+
 #=================== Strings ===================
 string_nl:                          #used for printing new lines to stdout
   .string "\n"                      #2 bytes + nul(0) = 3 bytes
@@ -74,7 +77,7 @@ call print_rax
 
 pop %rcx #pop the file descriptor in the stack back to rcx
 
-mov $buffer, %rax
+#mov $buffer, %rax
 #call print_rax
 #mov int_file_size, buffer
 
@@ -160,9 +163,59 @@ mov $string_nl, %rsi		# string we want to write is in "buffer"
 mov $1, %rdx			# number of bytes we want to write (8 characters)
 syscall
 
-
 # Endof: Testing memory allocation
 
+# Get the number of numbers in the file.
+mov file_stat+48, %rax
+push %rax
+mov file_readin_pointer, %rax
+push %rax
+
+call get_number_count # Number of numbers is not in %rax
+movq %rax, number_array_size
+
+# Now allocate the memory
+lea (,%rax,8), %rax
+
+push %rax
+call alloc_mem
+
+mov %rax, number_array_pointer
+/*xor %rax,%rax
+mov $number_array_pointer, %rax
+call print_rax
+mov number_array_pointer, %rax
+call print_rax*/
+
+# pop the arguments given to get_number_count.
+pop %rax
+pop %rax
+
+# Now parse the numbers into the number array.
+mov number_array_pointer, %rax
+push %rax
+mov file_stat+48, %rax
+push %rax
+mov file_readin_pointer, %rax
+push %rax
+
+call parse_number_buffer
+
+pop %rax
+pop %rax
+pop %rax
+
+# test printout
+
+xor %rax, %rax
+mov number_array_pointer(%rax, %rax, 1), %rax
+call print_rax
+
+mov $1, %rax
+mov $1, %rdi 			# 1 is file descriptor for stdout
+mov $string_nl, %rsi		# string we want to write is in "buffer"
+mov $1, %rdx			# number of bytes we want to write (8 characters)
+syscall
 
 
 /* insertion sort */
@@ -171,17 +224,6 @@ syscall
 call ISort2
 
 
-# Syscall: write string to stdout
-mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
-
-mov $16, %rcx
-
-mov (test-8)(%rcx), %rax
-call print_rax
 
 
 /* terminate */
@@ -249,17 +291,31 @@ movq $0, test+32
 movq $8, test+40
 movq $1, test+48
 
-mov $0,%rbx #Temp hardcode
+# Write the unput array out
+mov $0,%rbx
+mov number_array_pointer, %rsi
+
+IS_resultprintingloop:
+mov (%rsi,%rbx,8), %rcx
+mov %rcx, %rax
+call print_rax
+
+add $1, %rbx
+cmp number_array_size,%rbx
+jl IS_resultprintingloop
+
+/*mov $0,%rbx #Temp hardcode
 IS_resultprintingloop:
 xor %rcx, %rcx
 mov $test, %rcx
 add %rbx, %rcx
 mov (%rcx), %rax
+#cltq
 call print_rax
 
 add $8, %rbx
 cmp $48, %rbx
-jle IS_resultprintingloop
+jle IS_resultprintingloop*/
 
 mov $1, %rax
 mov $1, %rdi 			# 1 is file descriptor for stdout
@@ -278,7 +334,9 @@ syscall
 xor %rax,%rax
 mov $1, %rdi
 mov $1, %rcx #Should be set to be = i (rdi) anyway, but eh
-mov $7, %rsi
+#mov $7, %rsi
+mov number_array_size, %rsi
+mov number_array_pointer, %rdx
 
 IS2_WHILEI: #while (i < len(arr))
 cmp %rdi, %rsi
@@ -292,7 +350,7 @@ je IS2_WHILEIEND
   je IS2_WHILEJEND # |
   
   #mov $1, %rcx
-  movq (test  )(,%rcx,8), %r10 # arr[j]
+  #movq (test  )(,%rcx,8), %r10 # arr[j]
   #movq (test-8)(,%rcx,8), %r11 # arr[j-1]
   
   #mov $1, %rcx
@@ -301,17 +359,22 @@ je IS2_WHILEIEND
   #mov %r10, %rax
   #call print_rax
   
-  movq (test-8)(,%rcx,8), %r11 # arr[j-1]
+  #movq (test-8)(,%rcx,8), %r11 # arr[j-1]
   
   #mov %r11, %rax
   #call print_rax
+  
+  movq   (%rdx,%rcx,8), %r10
+  movq -8(%rdx,%rcx,8), %r11
   
   cmp %r10, %r11    # |-> arr[j-1] > arr[j]
   jle IS2_WHILEJEND # |
   
   #swap
-  mov %r11, (test  )(,%rcx,8)
-  mov %r10, (test-8)(,%rcx,8)
+  #mov %r11, (test  )(,%rcx,8)
+  #mov %r10, (test-8)(,%rcx,8)
+  mov %r11,   (%rdx,%rcx,8)
+  mov %r10, -8(%rdx,%rcx,8)
   
   #endof: swap
   
@@ -349,7 +412,19 @@ mov $1, %rdx			# number of bytes we want to write (8 characters)
 syscall
 
 
-mov $0,%rbx #Temp hardcode
+mov $0,%rbx
+mov number_array_pointer, %rsi
+
+IS_resultprintingloop2:
+mov (%rsi,%rbx,8), %rcx
+mov %rcx, %rax
+call print_rax
+
+add $1, %rbx
+cmp number_array_size,%rbx
+jl IS_resultprintingloop2
+
+/*mov $0,%rbx #Temp hardcode
 IS_resultprintingloop2:
 xor %rcx, %rcx
 mov $test, %rcx
@@ -360,7 +435,7 @@ call print_rax
 
 add $8, %rbx
 cmp $48, %rbx
-jle IS_resultprintingloop2
+jle IS_resultprintingloop2*/
 
 /* pop and restore our registers from the stack */
 pop %r11
