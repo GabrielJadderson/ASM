@@ -1,0 +1,11 @@
+#!/bin/bash
+# @author Gabriel Jadderson
+# *
+# * This script assembles and links a file an assembly file.
+# * This script does also pass the --gstabs arugment for debugging with gdb
+# * Usage: ./build [arg] eg. ./build someasm   (NOTICE: do not include the assembly file extension just the base filename)
+# * Usage: bash build [arg] eg. bash build assfile
+# ->
+
+as --gstabs $1.asm -o $1.o
+ld $1.o -o $1

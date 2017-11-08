@@ -104,7 +104,7 @@ syscall
 */
 
 # Testing memory allocation
-mov file_stat+48,%rax # Move the file size into rax.
+mov file_stat+48, %rax # Move the file size into rax.
 
 push %rax
 call alloc_mem
@@ -234,7 +234,7 @@ jmp terminate
 .type ISort2, @function
 ######################
 # Insertion Sort
-# 
+#
 ######################
 ISort2:
 push 	%rbp
@@ -330,7 +330,7 @@ syscall
  * rdx not used, good idea to assign this to array start memory address
  */
 
-# Initialization 
+# Initialization
 xor %rax,%rax
 mov $1, %rdi
 mov $1, %rcx #Should be set to be = i (rdi) anyway, but eh
@@ -342,47 +342,47 @@ IS2_WHILEI: #while (i < len(arr))
 cmp %rdi, %rsi
 je IS2_WHILEIEND
 # i < len(arr):
-  
+
   mov %rdi, %rcx # j = i
-  
+
   IS2_WHILEJ: #while j > 0 && arr[j-1] > arr[j]
   cmp $0, %rcx     # |-> j > 0
   je IS2_WHILEJEND # |
-  
+
   #mov $1, %rcx
   #movq (test  )(,%rcx,8), %r10 # arr[j]
   #movq (test-8)(,%rcx,8), %r11 # arr[j-1]
-  
+
   #mov $1, %rcx
   #movq (test-8)(,%rcx, 8), %r10
-  
+
   #mov %r10, %rax
   #call print_rax
-  
+
   #movq (test-8)(,%rcx,8), %r11 # arr[j-1]
-  
+
   #mov %r11, %rax
   #call print_rax
-  
+
   movq   (%rdx,%rcx,8), %r10
   movq -8(%rdx,%rcx,8), %r11
-  
+
   cmp %r10, %r11    # |-> arr[j-1] > arr[j]
   jle IS2_WHILEJEND # |
-  
+
   #swap
   #mov %r11, (test  )(,%rcx,8)
   #mov %r10, (test-8)(,%rcx,8)
   mov %r11,   (%rdx,%rcx,8)
   mov %r10, -8(%rdx,%rcx,8)
-  
+
   #endof: swap
-  
-  
-  
+
+
+
   dec %rcx
   jmp IS2_WHILEJ
-  
+
   IS2_WHILEJEND:
 
 inc %rdi
@@ -761,7 +761,8 @@ print_rax:
   push  %rsi
   push  %r9
 
-  mov   $6, %r9           # we always print the 6 characters "RAX: \n"
+  /* mov   $6, %r9           # we always print the 6 characters "RAX: \n" */
+  mov   $1, %r9
   push  $10               # put '\n' on the stack
 
   loop1:
@@ -775,16 +776,16 @@ print_rax:
   cmp   $0, %rax
   jne   loop1             # loop until rax = 0
 
-  mov   $0x20, %rax       # ' '
-  push  %rax
-  mov   $0x3a, %rax       # ':'
-  push  %rax
-  mov   $0x58, %rax       # 'X'
-  push  %rax
-  mov   $0x41, %rax       # 'A'
-  push  %rax
-  mov   $0x52, %rax       # 'R'
-  push  %rax
+  #mov   $0x20, %rax       # ' '
+  #push  %rax
+  #mov   $0x3a, %rax       # ':'
+  #push  %rax
+  #mov   $0x58, %rax       # 'X'
+  #push  %rax
+  #mov   $0x41, %rax       # 'A'
+  #push  %rax
+  #mov   $0x52, %rax       # 'R'
+  #push  %rax
 
   print_loop:
   mov   $1, %rax          # Here we make a syscall. 1 in rax designates a sys_write

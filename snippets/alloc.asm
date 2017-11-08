@@ -3,9 +3,9 @@
 ###############################################################################
 # This function is our simple and naive memory manager. It expects to
 # receive the number of bytes to be reserved on the stack.
-# 
+#
 # The function is not register save!
-# 
+#
 # The function returns the beginning of the reserved heap space in rax
 ###############################################################################
 
@@ -14,17 +14,37 @@ alloc_mem:
 	push 	%rbp
 	mov 	%rsp,%rbp 		#Function Prolog
 
+	/* save stack */
+	push	%rax
+	push	%rbx
+	push	%rcx
+	push	%rdx
+	push	%rdi
+	push	%rsi
+
+
 	#First, we need to retrieve the current end of our heap
 	mov		$0,%rdi
 	mov		$12,%rax
 	syscall					#The current end is in %rax
 	push	%rax			#We have to save this, this will be the beginning of the cleared field
-	add		16(%rbp),%rax	#Now we add the desired additional space on top of the current end of our heap	
+	add		16(%rbp),%rax	#Now we add the desired additional space on top of the current end of our heap
 	mov		%rax,%rdi
 	mov		$12,%rax
 	syscall
 
 	pop		%rax
+
+
+	/* restore stack */
+	pop		%rsi
+	pop		%rdi
+	pop		%rdx
+	pop		%rcx
+	pop		%rbx
+	pop		%rax
+
+
 	mov		%rbp,%rsp		#Function Epilog
-	pop 	%rbp			
+	pop 	%rbp
 	ret
