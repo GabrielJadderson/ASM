@@ -74,37 +74,11 @@ call get_file_size
   mov		$file_stat, %rbx
   mov		48(%rbx),%rax	#Position of size in the struct
 
-mov %rax, int_file_size           #store the result in memory variable
+#mov %rax, int_file_size           #store the result in memory variable
 
-call print_rax
+#call print_rax
 
 pop %rcx #pop the file descriptor in the stack back to rcx
-
-#mov $buffer, %rax
-#call print_rax
-#mov int_file_size, buffer
-
-/* Syscall: read n chars from file */
-/*mov $0, %rax
-mov %rcx, %rdi 			# %rcx is file descriptor for our file
-mov $buffer, %rsi		# we want to save string in "buffer"
-mov $53, %rdx			# number of bytes we want to read (8 characters)
-syscall
-*/
-/* Syscall: write string to stdout */
-/*mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $buffer, %rsi		# string we want to write is in "buffer"
-mov $53, %rdx			# number of bytes we want to write (8 characters)
-syscall
-*/
-/* Syscall: write string to stdout */
-/*mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
-*/
 
 # Testing memory allocation
 mov file_stat+48, %rax # Move the file size into rax.
@@ -113,23 +87,6 @@ push %rax
 call alloc_mem
 
 mov %rax, file_readin_pointer
-xor %rax,%rax
-mov $file_readin_pointer, %rax
-call print_rax
-mov file_readin_pointer, %rax
-call print_rax
-
-mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
-
-mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
 
 # Syscall: read n chars from file
 mov $0, %rax
@@ -138,22 +95,8 @@ mov file_readin_pointer, %rsi		# we want to save string in "buffer"
 mov file_stat+48, %rdx			# number of bytes we want to read (8 characters)
 syscall
 
-/*
-mov (file_readin_pointer), %r15
-xor %r13,%r13
-xor %rax,%rax
-
-readfilebytevaluewriteout: #Writes out all the bytes.
-movb (%r15, %r13, 1), %al
-call print_rax
-inc %r13
-
-cmp file_stat+48,%r13
-jl readfilebytevaluewriteout
-*/
-
 # Syscall: write string to stdout
-mov $1, %rax
+/*mov $1, %rax
 mov $1, %rdi 			# 1 is file descriptor for stdout
 mov (file_readin_pointer), %rsi		# string we want to write is in "buffer"
 mov file_stat+48, %rdx			# number of bytes we want to write (8 characters)
@@ -165,7 +108,7 @@ mov $1, %rdi 			# 1 is file descriptor for stdout
 mov $string_nl, %rsi		# string we want to write is in "buffer"
 mov $1, %rdx			# number of bytes we want to write (8 characters)
 syscall
-
+*/
 # Endof: Testing memory allocation
 
 # Get the number of numbers in the file.
@@ -184,11 +127,6 @@ push %rax
 call alloc_mem
 
 mov %rax, number_array_pointer
-/*xor %rax,%rax
-mov $number_array_pointer, %rax
-call print_rax
-mov number_array_pointer, %rax
-call print_rax*/
 
 # pop the arguments given to get_number_count.
 pop %rax
@@ -208,23 +146,9 @@ pop %rax
 pop %rax
 pop %rax
 
-# test printout
-
-xor %rax, %rax
-mov number_array_pointer(%rax, %rax, 1), %rax
-call print_rax
-
-mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
-
 
 /* insertion sort */
-#call insertion_sort
-
-call ISort2
+call insertion_sort
 
 
 /* print number of compares out when program is done */
@@ -245,12 +169,12 @@ jmp terminate
 
 
 
-.type ISort2, @function
+.type insertion_sort, @function
 ######################
 # Insertion Sort
 #
 ######################
-ISort2:
+insertion_sort:
 push 	%rbp
 mov 	%rsp,%rbp 		#Function Prolog
 
@@ -263,81 +187,6 @@ push %rdx
 push %r10
 push %r11
 
-/*temp variables for testing [5, 3, 7, 2, 0, 8, 1]*/
-
-/* cumbersome
-push $1
-push $8
-push $0
-push $2
-push $7
-push $3
-push $5
-*/
-
-/* our array, TODO: i want to move them by 2 increments instead of 4, since they're words. but not sure of the consequences yet.*/
-#movl $5, -48(%rbp) # mov long for now
-#movl $3, -44(%rbp)
-#movl $7, -40(%rbp)
-#movl $2, -36(%rbp)
-#movl $0, -32(%rbp)
-#movl $8, -28(%rbp)
-#movl $1, -24(%rbp)
-
-#movl $0, -4(%rbp)        #j variable, should propably be less than 4 bytes long
-#movl $0, -8(%rbp)        #i variable
-#movl $0, -12(%rbp)       #key variable
-
-#mov $test, %r13
-/*movl $5, -48(%r13) # mov long for now
-movl $3, -44(%r13)
-movl $7, -40(%r13)
-movl $2, -36(%r13)
-movl $0, -32(%r13)
-movl $8, -28(%r13)
-movl $1, -24(%r13)*/
-
-movq $5, test
-movq $3, test+8
-movq $7, test+16
-movq $2, test+24
-movq $0, test+32
-movq $8, test+40
-movq $1, test+48
-
-# Write the unput array out
-mov $0,%rbx
-mov number_array_pointer, %rsi
-
-IS_resultprintingloop:
-mov (%rsi,%rbx,8), %rcx
-mov %rcx, %rax
-call print_rax
-
-add $1, %rbx
-call inc_compares #TODO: remove when testing performace
-cmp number_array_size,%rbx
-jl IS_resultprintingloop
-
-/*mov $0,%rbx #Temp hardcode
-IS_resultprintingloop:
-xor %rcx, %rcx
-mov $test, %rcx
-add %rbx, %rcx
-mov (%rcx), %rax
-#cltq
-call print_rax
-
-add $8, %rbx
-cmp $48, %rbx
-jle IS_resultprintingloop*/
-
-mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
-
 /* rax will be used as key
  * rdi will be used as i
  * rcx will be used as j
@@ -349,7 +198,6 @@ syscall
 xor %rax,%rax
 mov $1, %rdi
 mov $1, %rcx #Should be set to be = i (rdi) anyway, but eh
-#mov $7, %rsi
 mov number_array_size, %rsi
 mov number_array_pointer, %rdx
 
@@ -366,21 +214,6 @@ je IS2_WHILEIEND
   cmp $0, %rcx     # |-> j > 0
   je IS2_WHILEJEND # |
 
-  #mov $1, %rcx
-  #movq (test  )(,%rcx,8), %r10 # arr[j]
-  #movq (test-8)(,%rcx,8), %r11 # arr[j-1]
-
-  #mov $1, %rcx
-  #movq (test-8)(,%rcx, 8), %r10
-
-  #mov %r10, %rax
-  #call print_rax
-
-  #movq (test-8)(,%rcx,8), %r11 # arr[j-1]
-
-  #mov %r11, %rax
-  #call print_rax
-
   movq   (%rdx,%rcx,8), %r10
   movq -8(%rdx,%rcx,8), %r11
 
@@ -389,14 +222,9 @@ je IS2_WHILEIEND
   jle IS2_WHILEJEND # |
 
   #swap
-  #mov %r11, (test  )(,%rcx,8)
-  #mov %r10, (test-8)(,%rcx,8)
   mov %r11,   (%rdx,%rcx,8)
   mov %r10, -8(%rdx,%rcx,8)
-
   #endof: swap
-
-
 
   dec %rcx
   jmp IS2_WHILEJ
@@ -404,17 +232,6 @@ je IS2_WHILEIEND
   IS2_WHILEJEND:
 
 inc %rdi
-/*push %rdi
-push %rsi
-push %rdx
-mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
-pop %rdx
-pop %rsi
-pop %rdi*/
 jmp IS2_WHILEI
 
 IS2_WHILEIEND:
@@ -423,11 +240,6 @@ IS2_WHILEIEND:
 
 IS_ENDFUNCTION: # Convenient for bypassing things for testing when segfaults happen somewhere.
 /* Syscall: write string to stdout */
-mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
 
 
 mov $0,%rbx
@@ -439,22 +251,8 @@ mov %rcx, %rax
 call print_rax
 
 add $1, %rbx
-call inc_compares #TODO: remove when testing performace
 cmp number_array_size,%rbx
 jl IS_resultprintingloop2
-
-/*mov $0,%rbx #Temp hardcode
-IS_resultprintingloop2:
-xor %rcx, %rcx
-mov $test, %rcx
-add %rbx, %rcx
-mov (%rcx), %rax
-#cltq
-call print_rax
-
-add $8, %rbx
-cmp $48, %rbx
-jle IS_resultprintingloop2*/
 
 /* pop and restore our registers from the stack */
 pop %r11
@@ -468,210 +266,6 @@ pop %rax
 mov		%rbp,%rsp		#Function Epilog
 pop 	%rbp
 ret
-
-
-
-.type insertion_sort, @function
-insertion_sort:
-push 	%rbp
-mov 	%rsp,%rbp 		#Function Prolog
-
-/* push and save our registers on the stack */
-push %rax
-push %rdi
-push %rcx
-push %rsi
-push %rdx
-
-/*temp variables for testing [5, 3, 7, 2, 0, 8, 1]*/
-
-/* cumbersome
-push $1
-push $8
-push $0
-push $2
-push $7
-push $3
-push $5
-*/
-
-/* our array, TODO: i want to move them by 2 increments instead of 4, since they're words. but not sure of the consequences yet.*/
-movl $5, -48(%rbp) # mov long for now
-movl $3, -44(%rbp)
-movl $7, -40(%rbp)
-movl $2, -36(%rbp)
-movl $0, -32(%rbp)
-movl $8, -28(%rbp)
-movl $1, -24(%rbp)
-
-movl $0, -4(%rbp)        #j variable, should propably be less than 4 bytes long
-movl $0, -8(%rbp)        #i variable
-movl $0, -12(%rbp)       #key variable
-
-mov $test, %r13
-movl $5, -48(%r13) # mov long for now
-movl $3, -44(%r13)
-movl $7, -40(%r13)
-movl $2, -36(%r13)
-movl $0, -32(%r13)
-movl $8, -28(%r13)
-movl $1, -24(%r13)
-
-mov $-48,%rbx #Temp hardcode
-is_resultprintingloop:
-xor %rcx, %rcx
-mov %r13, %rcx
-add %rbx, %rcx
-mov (%rcx), %rax
-cltq
-call print_rax
-
-add $4, %rbx
-call inc_compares #TODO: remove when testing performace
-cmp $-24, %rbx
-jle is_resultprintingloop
-
-/* rax will be used as key
- * rdi will be used as i
- * rcx will be used as j
- * rsi will hold the length/number of elements in our array
- * rdx not used, good idea to assign this to array start memory address
- */
-
-
-/* for j = 2 to A.length */
-/* j = 2 */
-movl $2, -4(%rbp)
-
-for_loop:
-call inc_compares #TODO: remove when testing performace
-cmp $6, %rcx      #6 because we have 6 elements our array. TODO: replace static variable with dynamic.
-jg end_for_loop
-
-/* start key = A[j] */
-mov -4(%rbp), %eax #i just chose a random long register here
-cltq              #convert long to quad, i'm not sure what this does
- /* hope this works lol, move to the start of the mem address of our array into rcx register. actually also think is dereferences the address to get it's value and stores it in rcx */
-mov -48(%rbp,%rax,4), %eax
-/* cp rcx to key */
-mov %eax, -12(%rbp)
-/* end key = A[j] */
-
-/* i = j - 1 */
-mov -4(%rbp), %rax
-sub $1, %rax
-mov %eax, -8(%rbp)
-
-
-/*  while (i > 0 && A[i] > key) */
-while_loop_start:
-call inc_compares #TODO: remove when testing performace
-cmpl $0, -8(%rbp)        #i > 0
-jle while_loop_end
-movl -8(%rbp), %eax      #again i chose a random long register for this operation */
-cltq                    #convert long to quad for operation and overflow prevention?
-movl -48(%rbp,%rax,4), %eax
-call inc_compares #TODO: remove when testing performace
-cmpl %eax, -12(%rbp)
-jge while_loop_end
-
-/* A[i + 1] = A[i] */
-movl -8(%rbp), %eax     #put i in eax
-leal 1(%rax), %ecx     #get address of i + 1 stored in rax and put in rcx !NP!
-movl -8(%rbp), %eax     #store i in rax
-cltq
-movl -48(%rbp,%rax,4), %edx #put start array in rdx
-movslq %ecx, %rax
-movl %edx, -48(%rbp,%rax,4)
-/* i = i - 1*/
-subl $1, -8(%rbp)
-jmp while_loop_start
-
-while_loop_end:
-/* A[i + 1] = key */
-movl -8(%rbp), %eax
-addl $1, %eax
-cltq
-movl -12(%rbp), %edx
-movl %edx, -48(%rbp,%rax,4)
-
-jmp increment_for_loop_and_restart
-
-/* end one loop iteration, increment and restart */
-increment_for_loop_and_restart:
-addl $1, -4(%rbp)
-jmp for_loop
-
-end_for_loop:
-
-/* test: print array the lazy way lol */
-/*
-mov -48(%rbp), %rax
-cltq
-call print_rax
-
-mov -44(%rbp), %rax
-cltq
-call print_rax
-
-mov -40(%rbp), %rax
-cltq
-call print_rax
-
-mov -36(%rbp), %rax
-cltq
-call print_rax
-
-mov -32(%rbp), %rax
-cltq
-call print_rax
-
-mov -28(%rbp), %rax
-cltq
-call print_rax
-
-mov -24(%rbp), %rax
-cltq
-call print_rax
-*/
-
-/* Syscall: write string to stdout */
-mov $1, %rax
-mov $1, %rdi 			# 1 is file descriptor for stdout
-mov $string_nl, %rsi		# string we want to write is in "buffer"
-mov $1, %rdx			# number of bytes we want to write (8 characters)
-syscall
-
-
-mov $-48,%rbx #Temp hardcode
-is_resultprintingloop2:
-xor %rcx, %rcx
-mov %r13, %rcx
-add %rbx, %rcx
-mov (%rcx), %rax
-cltq
-call print_rax
-
-add $4, %rbx
-call inc_compares #TODO: remove when testing performace
-cmp $-24, %rbx
-jle is_resultprintingloop2
-
-
-/* pop and restore our registers from the stack */
-pop %rdx
-pop %rsi
-pop %rcx
-pop %rdi
-pop %rax
-
-mov		%rbp,%rsp		#Function Epilog
-pop 	%rbp
-ret
-
-
-
-
 
 
 
