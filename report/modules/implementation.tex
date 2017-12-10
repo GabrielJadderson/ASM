@@ -1,6 +1,31 @@
 \section{Implementation}
 
-we've implemented a insertionsort algorithm based on \ref{fig:insertionsort}
-\begin{lstlisting}
+<<<<<<< HEAD
 
+\includegraphics[width=0.35\textwidth]{insertionsort}\par\vspace{0.5cm} %FIX
+
+
+
+%code formatting
+=======
+we've implemented a insertionsort algorithm based on \ref{fig:insertionsort}
+>>>>>>> cc868026b9a98ac83b16022ba1432811d672711c
+\begin{lstlisting}
+.global _start
+
+.text
+_start:
+    movl  $4, %eax
+    movl  $1, %ebx
+    movl  $msg, %ecx
+    movl  $len, %edx
+    int   $0x80
+
+    movl  $1, %eax
+    movl  $0, %ebx
+    int   $0x80
+.data
+msg:
+    .ascii  "Hello, world!\n"
+    len =   . - msg
 \end{lstlisting}
