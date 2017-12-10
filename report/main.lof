@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 \contentsline {xsect}{Introduction}{1}{section*.2}
 \contentsline {xsect}{Design}{1}{section.1}
 \contentsline {xsect}{Implementation}{1}{section.2}
 \contentsline {xsect}{Testing}{2}{lstnumber.-1.17}
 \contentsline {xsect}{Conclusion}{2}{section.4}
+=======
+\contentsline {xsect}{Introduction and Design}{1}{section*.2}
+\contentsline {figure}{\numberline {1}{\ignorespaces psuedocode of insertionsort}}{1}{figure.1}
+\contentsline {xsect}{Testing}{1}{figure.1}
+\contentsline {xsect}{Conclusion}{2}{lstnumber.-1.1}
+>>>>>>> cc868026b9a98ac83b16022ba1432811d672711c
 \contentsfinish 

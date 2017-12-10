@@ -18,8 +18,8 @@ number_array_pointer:
 number_array_size:
   .space 8
 
-number_of_compares:
-  .space 8                          #64-bit integer for counting the amount of compares
+#number_of_compares:
+#  .space 8                          #64-bit integer for counting the amount of compares
 
 #=================== Strings ===================
 string_nl:                          #used for printing new lines to stdout
@@ -28,8 +28,8 @@ string_nl:                          #used for printing new lines to stdout
 string_file_size:                   #used for printing the file size to stdout
   .string "File size: \n"             #11 bytes + nul(0) = 12 bytes
 
-string_compares:                    #used for printing the compares to stdout
-  .string "Number of compares: \n"    #20 bytes + nul(0) = 21 bytes
+#string_compares:                    #used for printing the compares to stdout
+#  .string "Number of compares: \n"    #20 bytes + nul(0) = 21 bytes
 
 #=================== Strings ===================
 
@@ -152,14 +152,14 @@ call insertion_sort
 
 
 /* print number of compares out when program is done */
-push $string_compares
+/*push $string_compares
 call print_string
 pop string_compares
 push %rax
 mov number_of_compares, %rax
 call print_rax
 pop %rax
-
+*/
 
 
 
@@ -202,7 +202,7 @@ mov number_array_size, %rsi
 mov number_array_pointer, %rdx
 
 IS2_WHILEI: #while (i < len(arr))
-call inc_compares #TODO: remove when testing performace
+#call inc_compares #TODO: remove when testing performace
 cmp %rdi, %rsi
 je IS2_WHILEIEND
 # i < len(arr):
@@ -210,14 +210,14 @@ je IS2_WHILEIEND
   mov %rdi, %rcx # j = i
 
   IS2_WHILEJ: #while j > 0 && arr[j-1] > arr[j]
-  call inc_compares #TODO: remove when testing performace
+  #call inc_compares #TODO: remove when testing performace
   cmp $0, %rcx     # |-> j > 0
   je IS2_WHILEJEND # |
 
   movq   (%rdx,%rcx,8), %r10
   movq -8(%rdx,%rcx,8), %r11
 
-  call inc_compares #TODO: remove when testing performace
+  #call inc_compares #TODO: remove when testing performace
   cmp %r10, %r11    # |-> arr[j-1] > arr[j]
   jle IS2_WHILEJEND # |
 
@@ -554,7 +554,7 @@ print_rax:
       # the insertion sort algorithm uses the compare instruction.
       # this function only uses the rax register and is only rax safe.
       ###############################################################################
-
+/*
       .type inc_compares, @function
       inc_compares:
       push 	%rbp
@@ -572,7 +572,7 @@ print_rax:
       mov		%rbp,%rsp			#Function Epilog
     	pop 	%rbp
       ret
-
+*/
 
       ###############################################################################
       # This function prints a zero terminated String to the screen. The address of
