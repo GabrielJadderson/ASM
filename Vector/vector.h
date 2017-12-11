@@ -15,7 +15,7 @@ typedef struct Vector Vector;
 
 // actually define the structs
 struct Vector {
-    unsigned int initialized : 1;
+    //unsigned int initialized : 1;
     size_t size; // The size denotes the amount of elements currently occupied in the array.
     size_t capacity;// The capacity denotes the maximum length of the array. The default capacity of -1 denotes that the vector has not yet been allocated on the heap.
     void **vbuffer; // the vector buffer, this is our array and here we store our elements.

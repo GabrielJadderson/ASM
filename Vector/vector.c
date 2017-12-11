@@ -32,10 +32,10 @@ void printVector(Vector *v) {
 */
 void vector_init(Vector *vector) {
   if(vector == NULL) {printf("NULL?\n"); exit(1);}
-  if(vector->initialized == 1) {printf("INIT?\n");}
+  //if(vector->initialized == 1) {printf("INIT?\n");}
   
-  if (vector != NULL && vector->initialized == 0) {
-    vector->initialized = 1; // mark the vector initialized.
+  if (vector != NULL/* && vector->initialized == 0*/) {
+    //vector->initialized = 1; // mark the vector initialized.
     vector->size = (size_t) 0; //reset size to 0;
     vector->capacity = (size_t) 10; // set the initial capacity to 10;
     //void *ptr = (int*) 42; //we'll assign all start elements a void ptr of int 0.
@@ -56,11 +56,12 @@ void vector_init(Vector *vector) {
 // Note: the user is responsible for deleting all values
 // Note: the user is responsible for deleting the actual vector if it was dynamically allocated
 void vector_delete(Vector *vector) {
-  if (vector->initialized == 1) {
+  //if (vector->initialized == 1) {
+  if(vector != NULL) {
     free(vector->vbuffer);
     vector->capacity = 0;    // reset capacity
     vector->size = 0;        // reset size
-    vector->initialized = 0; // reset initialisation, this way we can reinintialize the vector again.
+    //vector->initialized = 0; // reset initialisation, this way we can reinintialize the vector again.
     printf("Vector deleted\n");
   } else {
     printf("Failed to delete vector, vector might not have been initialized.\n");
@@ -72,7 +73,7 @@ void vector_delete(Vector *vector) {
 // Insert a new element at the end of the vector
 // Pre: 'vector' != NULL
 void vector_push(Vector *vector, void *value) {
-  if (vector && value && vector->initialized == 1) {
+  if (vector != NULL && value != NULL/* && vector->initialized == 1*/) {
       //if (vector->size >= vector->capacity - 1) {
       if (vector->size >= vector->capacity) {
         //rezize
@@ -103,7 +104,7 @@ void vector_push(Vector *vector, void *value) {
 // Remove the last element in the vector and return the value
 // Pre: the vector is non-empty, 'vector' != NULL
 void *vector_pop(Vector *vector){
-  if (vector && vector->initialized == 1 && vector->size >= 1) {
+  if (vector != NULL /*&& vector->initialized == 1*/ && vector->size >= 1) {
     void *element = vector->vbuffer[vector->size -1];
     vector->size = vector->size - 1;
     return element;
@@ -117,11 +118,10 @@ void *vector_pop(Vector *vector){
 // Return the number of elements in the vector
 // Pre: 'vector' != NULL
 size_t vector_size(const Vector *vector){
-  if (vector && vector->initialized)
+  if (vector != NULL /*&& vector->initialized*/)
     return vector->size;
   else {
-    //printf("Vector is null or not initialized.\n");
-    printf("asdf\n");
+    printf("Vector is null or not initialized.\n");
     exit(1);
   }
 }
@@ -129,7 +129,7 @@ size_t vector_size(const Vector *vector){
 // Return the current capacity of the vector
 // Pre: 'vector' != NULL
 size_t vector_capacity(const Vector *vector) {
-  if (vector && vector->initialized)
+  if (vector != NULL /*&& vector->initialized*/)
     return vector->capacity;
   else {
     printf("Vector is null or not initialized.\n");
@@ -140,7 +140,7 @@ size_t vector_capacity(const Vector *vector) {
 // Return the value at the given index
 // Pre: index < vector_size(vector)
 void *vector_get_element(const Vector *vector, size_t index) {
-  if (vector && vector->initialized && index < vector->size)
+  if (vector != NULL && /*vector->initialized &&*/ index < vector->size)
     return vector->vbuffer[index];
   else {
     printf("Vector is null, not initialized or index >= size.\n");
@@ -165,7 +165,7 @@ int main(int argc, char const *argv[]) {
   int asdf[100];
   Vector v;
   //v.initialized = 0;
-  printf("WATS: %d, %d, %d, %p\n", v.initialized, v.size, v.capacity, v.vbuffer);
+  //printf("WATS: %d, %d, %d, %p\n", v.initialized, v.size, v.capacity, v.vbuffer);
 
   vector_init(&v);
 
@@ -178,11 +178,11 @@ int main(int argc, char const *argv[]) {
   void *ptr8 = (int*) 4555;
   
   vector_push(&v, &ptr);
-  //vector_push(&v, &ptr5);
-  //vector_push(&v, &ptr6);
-  //vector_push(&v, &ptr7);
-  //vector_push(&v, &ptr8);
-  //vector_push(&v, &ptr);
+  vector_push(&v, &ptr5);
+  vector_push(&v, &ptr6);
+  vector_push(&v, &ptr7);
+  vector_push(&v, &ptr8);
+  vector_push(&v, &ptr);
   /*
   vector_push(&v, &ptr);
   vector_push(&v, &ptr5);
@@ -248,14 +248,21 @@ int main(int argc, char const *argv[]) {
   printf("Capacity: %zu\n", vector_capacity(&v));
   printf("Size: %zu\n", vector_size(&v));
   
-  int muffin = vector_size(&v);
+  /*
   printf("Element printout using vector_get_element function:\n");
-  /*for(int i = 0; i < vector_size(&v); i++) {
-    printf("%d\n", muffin);
-    //printf("%d, ", * (int*)vector_get_element(&v, i));
+  for(int i = 0; i < vector_size(&v); i++) {
+    printf("%d, ", * (int*)vector_get_element(&v, i));
   }
   printf("\n");*/
   
+  vector_delete(&v);
+  
+  vector_init(&v);
+  
+  vector_push(&v, &ptr);
+  //vector_pop(&v);
+  
+  printVector(&v);
 
   //vector_delete(&v);
   //printf("%zu, %zu\n", v.size, v.capacity);
