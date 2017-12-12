@@ -159,7 +159,7 @@ void **vector_get_array(const Vector *vector) {
   }
 }
 
-
+/*
 int main(int argc, char const *argv[]) {
 
   int asdf[100];
@@ -183,6 +183,7 @@ int main(int argc, char const *argv[]) {
   vector_push(&v, &ptr7);
   vector_push(&v, &ptr8);
   vector_push(&v, &ptr);
+  */
   /*
   vector_push(&v, &ptr);
   vector_push(&v, &ptr5);
@@ -233,28 +234,28 @@ int main(int argc, char const *argv[]) {
   vector_push(&v, &ptr8);
   vector_push(&v, &ptr8);
   */
-
+/*
   printVector(&v);
 
   //printf("%i\n", *(int*)vector_get_element(&v, 5));
-
+*/
   /*void *poped = vector_pop(&v);
   printf("%p, %i\n", &poped, *(int*)poped);
 
   void *pope = vector_pop(&v);
   printf("%p, %i\n", &pope, *(int*)pope);*/
 
-
+/*
   printf("Capacity: %zu\n", vector_capacity(&v));
   printf("Size: %zu\n", vector_size(&v));
-  
+  */
   /*
   printf("Element printout using vector_get_element function:\n");
   for(int i = 0; i < vector_size(&v); i++) {
     printf("%d, ", * (int*)vector_get_element(&v, i));
   }
   printf("\n");*/
-  
+  /*
   vector_delete(&v);
   
   vector_init(&v);
@@ -271,4 +272,4 @@ int main(int argc, char const *argv[]) {
   getchar();
 
   return 0;
-}
+}*/
