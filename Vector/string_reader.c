@@ -19,15 +19,6 @@ int lexcmp(const void *s1_, const void *s2_) {
   return 0;
 }
 
-int compareMyType (const void * a, const void * b)
-{
-  #define MyType int
-  if ( *(MyType*)a <  *(MyType*)b ) return -1;
-  if ( *(MyType*)a == *(MyType*)b ) return 0;
-  if ( *(MyType*)a >  *(MyType*)b ) return 1;
-}
-
-
 int main(int argc,char **argv) {
   
   if(argc < 2) {
@@ -44,18 +35,26 @@ int main(int argc,char **argv) {
   Vector stringVector;
   vector_init(&stringVector);
   
-  char *inStr = malloc(sizeof(char) * 1024);
+  char *inStr; // = malloc(sizeof(char) * 1024);
   //char inStr[1024]; //Buffer
   
   //int code = fscanf(f, "%[^\n]", inStr);
   //printf("#args successfully filled: %d\n", code);
   
   //printf("> READING INPUT FILE:\n");
-  while(fscanf(f, "%[^\n]\n", inStr) > 0) {
+  /*while(fscanf(f, "%[^\n]\n", inStr) > 0) {
     //printf("String read: %s\n", inStr);
     vector_push(&stringVector, inStr);
     inStr = malloc(sizeof(char) * 1024);
+  }*/
+  
+  while(feof(f) == 0) {
+    inStr = malloc(sizeof(char) * 1024);
+    fgets(inStr, sizeof(char) * 1024, f);
+    vector_push(&stringVector, inStr);
   }
+  
+  
   
   //int code = fscanf(f, "%[^\n]\n", inStr);
   //printf("#args successfully filled: %d\n", code);
@@ -76,7 +75,7 @@ int main(int argc,char **argv) {
   //printf("-----\n");
   
   for(int i = 0; i < vector_size(&stringVector); i++) {
-    printf("%s\n", (char*) vector_get_element(&stringVector, i));
+    printf("%s", (char*) vector_get_element(&stringVector, i));
   }
   /*
   char* s1 = "ava";
@@ -87,40 +86,6 @@ int main(int argc,char **argv) {
   */
   
   fclose(f);
-  
-  /*
-  printf("-----\n");
-  
-  char *strs[3];
-  
-  strs[0] = "aaa";
-  strs[1] = "ddd";
-  strs[2] = "bbb";
-  
-  for(int i = 0; i < 3; i++) {
-    printf("%s\n", strs[i]);
-  }
-  
-  qsort(strs, 3, sizeof(char*), strcmp);
-  
-  printf("-----\n");
-  for(int i = 0; i < 3; i++) {
-    printf("%s\n", strs[i]);
-  }
-  
-  int nums[5] = {40, 10, 33, 2, 7};
-  
-  qsort(nums, 5, sizeof(int), compareMyType);
-  
-  printf("-----\n");
-  for(int i = 0; i < 5; i++) {
-    printf("%d\n", nums[i]);
-  }
-  */
-  
-  
-  
-  
   
   
   
