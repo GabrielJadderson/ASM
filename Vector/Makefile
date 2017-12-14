@@ -7,7 +7,7 @@ build:
 clean:
 	rm stringreader;
 
-
-
-
-
+test:
+	./stringreader stringWithSpaces.txt
+	./stringreader test.txt
+	./stringreader test2.txt
