@@ -32,12 +32,11 @@ void printVector(Vector *v) {
 * allocate and assign memory for the array and assign it's elements.
 */
 void vector_init(Vector *vector) {
-  if (vector != NULL/* && vector->initialized == 0*/) {
+  if (vector != NULL) {
     vector->size = (size_t) 0; //reset size to 0;
     vector->capacity = (size_t) 10; // set the initial capacity to 10;
     vector->vbuffer = malloc(sizeof(void *) * vector->capacity); //allocate memory on the heap.
     if (vector->vbuffer == 0) {printf("Failed to allocate memory.\n");exit(1);} //failsafe for malloc, in case memory is full etc.
-    //printf("Vector initialized\n");
   }
   else {
     printf("Failed to initialize vector, vector is null or vector already initialized\n"); //if null then exit
