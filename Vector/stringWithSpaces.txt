@@ -1,0 +1,6 @@
+This first string has spaces!
+This string has a	tab!
+	This string starts with a tab!
+    This string starts with four spaces!
+ASDFGHJKL
+I AM NOT VERY GOOD AT COMING UP WITH RANDOM THINGS THAT WON'T MAKE ME SOUND LIKE A MADMAN!
