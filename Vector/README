@@ -1,4 +1,5 @@
 Authors: Gabriel Howard Jadderson (gajad16@student.sdu.dk), Patrick Jakobsen (pajak16@student.sdu.dk)
 
 The test file: "stringWithSpaces" contains spaces and tabs and should make a good test candidate.
-The test file: "test2.txt" contains small and big lettered strings and mix thereof, as well as numbers, to test the program. 
+The test file: "basicTest.txt" contains small and big lettered strings and mix thereof, as well as numbers, to test the program.
+The test file: "specialchar.txt" contains special characters, for testing. 
